@@ -20,6 +20,7 @@ lib-cov
 
 # Coverage directory used by tools like istanbul
 coverage
+/coverage
 *.lcov
 
 # nyc test coverage
@@ -36,9 +37,12 @@ bower_components
 
 # Compiled binary addons (https://nodejs.org/api/addons.html)
 build/Release
+/build
 
 # Dependency directories
 node_modules/
+/.pnp
+.pnp.js
 jspm_packages/
 
 # TypeScript v1 declaration files
@@ -71,6 +75,10 @@ typings/
 # dotenv environment variables file
 .env
 .env.test
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
@@ -102,3 +110,7 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Misc
+.DS_Store
+.code-workspace
