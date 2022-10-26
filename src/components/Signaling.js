@@ -26,6 +26,12 @@ class Signaling extends Component {
 		}
 		this.ws = null;
 		this.webRTCConnection = null;
+
+        // CSS Styling
+        this.componetnStyle = {
+            backgroundColor: "darkgray",
+            width: "20%"
+        }
 	}
 
 	componentDidMount(prevProps, prevState, snapshot) {
@@ -166,77 +172,23 @@ class Signaling extends Component {
 	}
 
 	render() {
-		return (
-			React.createElement(
-				Container,
-				{
-					id: 'tdSignaling',
-					style: {
-						backgroundColor: "darkgray",
-						width: "20%"
-					}
-				},
-				React.createElement('h2', null, 'Signaling:'),
-				React.createElement(
-					Container,
-					{ 
-						id: 'tdSignalingForm',
-						disableGutters: true
-					},
-					React.createElement('h3', null, 'signaling server settings:'),
-					React.createElement(
-						TextField,
-						{
-							variant: 'standard',
-							label: 'Address',
-							id: 'address',
-							defaultValue: '127.0.0.1',
-							onChange: (event) => { this.handleAddressChange(event) }
-						}
-					),
-					React.createElement(
-						TextField,
-						{
-							variant: 'standard',
-							label: 'Port',
-							id: 'port',
-							defaultValue: 9980,
-							sx: {
-								marginTop: 1,
-							},
-							onChange: (event) => { this.handlePortChange(event) }
-						}
-					),
-					React.createElement(
-						Button,
-						{
-							variant: 'contained',
-							id: 'btnConnect',
-							sx: {
-								marginTop: 2,
-							},
-							onClick: () => { this.handleClickConnect() }
-						},
-						'Connect'
-					)
-				),
-				React.createElement(
-					Container,
-					{ 
-						id: 'tdSignalingList',
-						disableGutters: true
-					},
-					React.createElement('h3', null, 'signaling clients List:'),
-					React.createElement(
-						List,
-						{ className: 'clients' },
-						this.state.tdClients.map(tdClient => (
-							tdClient.render() // TODO: TBD if it's legit
-						))
-					)
-				)
-			)
-		);
+        return <Container id="tdSignaling" style={ this.componentStyle }>
+            <h2>Signaling: </h2>
+            <Container id="tdSignalingForm" disableGutters></Container>
+            <h3>Signaling server settings: </h3>
+            <TextField variant='standard' label='Address' id='adress' defaultValue='127.0.0.1' onChange={ this.handleAddressChange }></TextField>
+            <TextField variant='standard' label='Port' id='port' defaultValue='9980' onChange={ this.handlePortChange }></TextField>
+            <Button variant='contained' id='btnConnect' style={{ marginTop: 2 }} onClick={ this.handleClickConnect }>Connect</Button>
+            <Container id="tdSignalingList" disableGutters>
+                <h3>Signaling clients List: </h3>
+                <List className='clients'>
+                    {
+                        // Shady, should use react component instead of object instance
+                        this.state.tdClients.map(tdClient => tdClient.render())
+                    }
+                </List>
+            </Container>
+        </Container>;
 	}
 }
 

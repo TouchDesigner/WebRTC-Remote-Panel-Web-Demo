@@ -36,45 +36,15 @@ class App extends Component {
 		document.removeEventListener("keydown", this.handleKeyDown);
 	}
 
-	// handleKeyDown(event) {
-	// 	console.log(event)
-	// 	this.webRTCConnection.sendKeyboardData(event)
-	// }
-
 	render() {
-		return (
-			React.createElement(
-				Container,
-				{ 
-					id: 'tdApp',
-					maxWidth: 'xl'
-				 },
-				React.createElement(CssBaseline, null),
-				React.createElement('h1', null, 'TD WebRTC Web Demo 🍌'),
-				React.createElement(
-					Container,
-					{
-						maxWidth: 'xl',
-						disableGutters: true,						
-						style: {display: 'inline-flex'}
-					},
-					React.createElement(
-						Signaling,
-						{
-							id: 'signalingClient',
-							ref: this.signalingClient
-						}
-					),
-					React.createElement(
-						WebRTC,
-						{
-							id: 'webRTCConnection',
-							ref: this.webRTCConnection
-						}
-					)
-				)
-			)
-		);
+		return <Container id='tdApp' maxWidth='x1'>
+			<CssBaseline></CssBaseline>
+			<h1>TD WebRTC Web Demo 🍌</h1>
+			<Container maxWidth='x1' disableGutters style={{ display: 'inline-flex'}}>
+				<Signaling id='signalingClient' ref={ this.signalingClient }></Signaling>
+				<WebRTC id='webRTCConnection' ref={ this.webRTCConnection }></WebRTC>
+			</Container>
+		</Container>;
 	}
 }
 

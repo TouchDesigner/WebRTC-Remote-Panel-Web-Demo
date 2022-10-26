@@ -7,26 +7,28 @@ class WebRTC extends Component {
 	*/
 	constructor(props) {
 		super(props);
+
+        // TODO: Document what each props are used for
 		this.sendMouseData = this.sendMouseData.bind(this);
 		this.sendKeyboardData = this.sendKeyboardData.bind(this);
-		this.dcMouse = null
-		this.dcKeyboard = null
-		this.peerConnection = null
+		this.dcMouse = null;
+		this.dcKeyboard = null;
+		this.peerConnection = null;
 		
-		this.signalingClient = null
-		this.target = null
-		this.signalingClientMessagesTypes = ['Offer', 'Answer', 'Ice']
+		this.signalingClient = null;
+		this.target = null;
+		this.signalingClientMessagesTypes = ['Offer', 'Answer', 'Ice'];
 		
 		this.mediaConstraints = {
 			audio: true,
-			video: true
+			video: true,
 		};
 
 		// Perfect negotiation specific
-		this.polite = false
-		this.makingOffer = false
+		this.polite = false;
+		this.makingOffer = false;
 		this.ignoreOffer = false;
-		this.isSettingRemoteAnswerPending = false
+		this.isSettingRemoteAnswerPending = false;
 	}
 
 	componentDidMount() {
@@ -132,7 +134,8 @@ class WebRTC extends Component {
 	handleIceCandidate(event) {
 		// Get connection if unavailable, so that target can be filled, hacked in at the moment
 		console.log('New ICE Candidate: ', event);
-		if (event.candidate) { // TODO: debug why in some cases, no candidates are sent out but event triggers
+		if (event.candidate) { 
+            // TODO: debug why in some cases, no candidates are sent out but event triggers
 			var target = this.signalingClient.state.tdClients[0].address;
 			
 			this.onMessageSendingIce(
@@ -432,34 +435,20 @@ class WebRTC extends Component {
 	}
 
 	render() {
-		return (
-			React.createElement(
-				Container,
-				{ 
-					id: 'webRTCViewer',
-					style: {
-						backgroundColor: "lightgrey"
-					},
-					disableGutters: true
-				},
-				React.createElement(
-					'video',
-					{
-						id: 'remoteVideo',
-						width: '100%',
-						height: '100%',
-						style: {
-							transform: 'scaleX(-1)',
-						},
-						autoPlay: true,
-						muted: false,
-						controls: false,
-						onMouseDown: this.sendMouseData,
-						onMouseMove: this.sendMouseData
-					}
-				)
-			)
-		);
+        return <Container id="webRTCViewer" style={{backgroundColor: 'lightGrey'}} disableGutters>
+            <video 
+                id="remoteVideo"
+                width="100%"
+                height="100%"
+                style={{transform: 'scaleX(-1)'}}
+ 				autoPlay
+		        muted={ false }
+                controls={ false }
+                onMouseDown={ this.sendMouseData }
+                onMouseMove={ this.sendMouseData }
+            >
+            </video>
+        </Container>;
 	}
 }
 

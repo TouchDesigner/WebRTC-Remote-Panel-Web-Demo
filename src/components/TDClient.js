@@ -9,13 +9,20 @@ class TDClient extends Component {
 		this.address = props.address;
 		this.properties = props.properties;
 		this.signalingClient = props.parent;
+
+        // CSS Styling
+        this.componentStyle = {
+            display: 'inline-block'
+        }
+        this.listItemTextStyle = {
+            width: '100%',
+            fontSize: '10px'
+        }
 	}
 
-	componentDidMount() {
-	}
+	componentDidMount() {}
 
-	componentWillUnmount() {
-	}
+	componentWillUnmount() {}
 
 	handleClickStartCall = (e) => {
 		this.signalingClient.webRTCConnection.onCallStart(this);
@@ -26,50 +33,15 @@ class TDClient extends Component {
 	}
 
 	render() {
-		return (
-			React.createElement(
-				ListItem, 
-				{ 
-					key: this.id,
-					style: {
-						display: 'inline-block'
-					},
-					disableGutters: true
-				},
-				React.createElement(
-					ListItemText, 
-					{ 
-						primary: this.address,
-						style: {
-							width: '100%',
-							fontSize: '10px'
-						}
-					}
-				),
-				React.createElement(
-					ListItemButton,
-					{ component: 'a' },
-					React.createElement(
-						ListItemText,
-						{
-							primary: 'Start',
-							onClick: this.handleClickStartCall
-						}
-					)
-				),
-				React.createElement(
-					ListItemButton,
-					{ component: 'a' },
-					React.createElement(
-						ListItemText,
-						{
-							primary: 'End',
-							onClick: this.handleClickEndCall
-						}
-					)
-				)
-			)
-		);
+        return <ListItem key={ this.id } style={ this.componentStyle } disableGutters>
+            <ListItemText primary= { this.address } style={ this.listItemTextStyle }></ListItemText>
+            <ListItemButton component='a'>
+                <ListItemText primary='Start' onClick={ this.handleClickStartCall }></ListItemText>
+            </ListItemButton>
+            <ListItemButton component='a'>
+                <ListItemText primary='End' onClick={ this.handleClickEndCall }></ListItemText>
+            </ListItemButton>
+        </ListItem>;
 	}
 }
 
