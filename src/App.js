@@ -1,4 +1,4 @@
-import React, { useEffect, useState, Component } from 'react';
+import React, { Component } from 'react';
 import { w3cwebsocket as W3CWebSocket } from "websocket";
 import CssBaseline from '@mui/material/CssBaseline';
 import Container from '@mui/material/Container';
@@ -10,11 +10,6 @@ import { List, ListItem, ListItemButton, ListItemText } from '@mui/material';
 // It's important to keep this line but it's not used in the code.
 // eslint-disable-next-line  no-unused-vars
 import adapter from 'webrtc-adapter';
-
-function getOrDefaultTo(object, key, default_value) {
-	var result = object[key];
-	return (typeof result !== "undefined") ? result : default_value;
-}
 
 class TDClient extends Component {
 	constructor(props) {
@@ -246,6 +241,8 @@ class WebRTC extends Component {
 				// this.deletePeerConnection();
 				this.peerConnection.restartIce();
 				break;
+			default:
+				console.log("No matching iceConnectionState" + event);
 		}
 	}
 
@@ -298,7 +295,7 @@ class WebRTC extends Component {
 		var remoteStream = document.getElementById("remoteVideo").srcObject;
 		var trackList = remoteStream.getTracks();
 
-		if (trackList.length == 0) {
+		if (trackList.length === 0) {
 			this.deletePeerConnection();
 		}
 	}
@@ -654,6 +651,8 @@ class Signaling extends Component {
 			if (tdClient.id === messageObj.content.client.id) {
 				exists = true;
 				return true;
+			} else {
+				return false;
 			}
 		});
 
@@ -696,6 +695,8 @@ class Signaling extends Component {
 			var newTDClient = new TDClient({ id: clientAsDict.id, address: clientAsDict.address, properties: clientAsDict.properties, parent: signalingClient });
 			tdClientsWorkerArray = [...signalingClient.state.tdClients];
 			tdClientsWorkerArray.push(newTDClient);
+
+			return tdClientsWorkerArray;
 		});
 
 		this.setState({ tdClients: tdClientsWorkerArray });
