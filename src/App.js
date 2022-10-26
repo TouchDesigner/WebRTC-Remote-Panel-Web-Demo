@@ -6,6 +6,11 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { List, ListItem, ListItemButton, ListItemText } from '@mui/material';
 
+// Import the webrtc shim to ensure maintaining features despite browser implementation changes
+// It's important to keep this line but it's not used in the code.
+// eslint-disable-next-line  no-unused-vars
+import adapter from 'webrtc-adapter';
+
 function getOrDefaultTo(object, key, default_value) {
 	var result = object[key];
 	return (typeof result !== "undefined") ? result : default_value;
