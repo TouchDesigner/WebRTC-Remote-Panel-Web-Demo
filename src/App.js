@@ -8,7 +8,7 @@ import Container from '@mui/material/Container';
 import adapter from 'webrtc-adapter';
 
 // Import local components
-import Signaling from './components/Signaling';
+import SignalingPanel from './components/SignalingPanel';
 import WebRTC from './components/WebRTC';
 
 class App extends Component {
@@ -41,7 +41,7 @@ class App extends Component {
 			<CssBaseline></CssBaseline>
 			<h1>TD WebRTC Web Demo 🍌</h1>
 			<Container maxWidth='x1' disableGutters style={{ display: 'inline-flex'}}>
-				<Signaling id='signalingClient' ref={ this.signalingClient }></Signaling>
+				<SignalingPanel id='signalingClient' ref={ this.signalingClient } />
 				<WebRTC id='webRTCConnection' ref={ this.webRTCConnection }></WebRTC>
 			</Container>
 		</Container>;

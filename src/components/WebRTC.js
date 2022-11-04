@@ -102,12 +102,12 @@ class WebRTC extends Component {
 		remoteVideo.removeAttribute("srcObject");
 	}
 
-	onCallStart(clientToCall) {
+	onCallStart(address, properties) {
 		console.log('onCallStart begins');
 
 		var webRTCConnection = this;
-		this.target = clientToCall.address;
-		this.polite = this.signalingClient.client.properties.timeJoined < clientToCall.properties.timeJoined
+		this.target = address;
+		this.polite = this.signalingClient.client.properties.timeJoined < properties.timeJoined
 
 		webRTCConnection.createPeerConnection()
 				
@@ -116,7 +116,7 @@ class WebRTC extends Component {
 		console.log('onCallStart ends');
 	}
 
-	onCallEnd(clientOnCall) {
+	onCallEnd() {
 		this.deletePeerConnection();
 	}
 
@@ -379,7 +379,6 @@ class WebRTC extends Component {
 	*/
 	onDataReceived(event) {
 		console.log(event);
-
 	}
 
 	sendKeyboardData(event) {		
