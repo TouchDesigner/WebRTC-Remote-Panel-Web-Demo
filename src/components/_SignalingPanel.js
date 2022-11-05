@@ -6,7 +6,7 @@ import Button from '@mui/material/Button';
 import { List } from '@mui/material';
 
 // Local
-import WebSocketClientListItem from './WebSocketClientListItem';
+import WebSocketClientListItem from './_WebSocketClientListItem';
 
 
 /**
@@ -14,69 +14,47 @@ import WebSocketClientListItem from './WebSocketClientListItem';
  * @param {*} props 
  * @returns 
  */
-function SignalingPanel(props) {
+function SignalingPanel({fRef}) {
+	// console.log(fRef);
+	// const componentStyle = {
+	// 	backgroundColor: "darkgray",
+	// 	width: "20%"
+	// }
 
-	const componentStyle = {
-		backgroundColor: "darkgray",
-		width: "20%"
-	}
-
-	const [tdClients, setTDClients] = useState([]);
-	const [port, setPort] = useState(9980);
-	const [address, setAddress] = useState('127.0.0.1');
+	// const [tdClients, setTDClients] = useState([]);
+	// const [port, setPort] = useState(9980);
+	// const [address, setAddress] = useState('127.0.0.1');
 
 
-	let client = {
-		id: null,
-		address: null,
-		properties: {domain: '/'}
-	}
-	let webRTCConnection = null;
+	// let client = {
+	// 	id: null,
+	// 	address: null,
+	// 	properties: {domain: '/'}
+	// }
+	// let webRTCConnection = fRef;
 
-	const handleAddressChange = (event) => {
-		console.log('Signaling Host Address was changed');
-		setAddress(event.target.value);
-	}
+	// const handleAddressChange = (event) => {
+	// 	console.log('Signaling Host Address was changed');
+	// 	setAddress(event.target.value);
+	// }
 
-	const handlePortChange = (event) => {
-		console.log('Signaling Host Port was changed');
-		setPort(event.target.value);
-	}
+	// const handlePortChange = (event) => {
+	// 	console.log('Signaling Host Port was changed');
+	// 	setPort(event.target.value);
+	// }
 
-	const handleClickConnect = (event) => {
-		// TODO: Check if already a WS instance
-		if (ws && ws.OPEN) {
-			var protocol = (window.location.protocol === 'https:') ? 'wss://' : 'ws://';
-			ws = new W3CWebSocket(protocol + address + ':' + port);
-		}
+	// const handleClickConnect = (event) => {
+	// 	// TODO: Check if already a WS instance
+	// 	if (ws && ws.OPEN) {
+	// 		var protocol = (window.location.protocol === 'https:') ? 'wss://' : 'ws://';
+	// 		ws = new W3CWebSocket(protocol + address + ':' + port);
+	// 	}
 
-		// TODO: Set button to connected state
-		console.log('Signaling Host was changed (or connected) to: ' + ws);
-	} 
+	// 	// TODO: Set button to connected state
+	// 	console.log('Signaling Host was changed (or connected) to: ' + ws);
+	// } 
 
-	// Should this live in the signaling panel??
-	const onMessageReceived = (messageObj) => {
-		console.log('Signaling, message received:', messageObj);
-		var fnName = 'onMessageReceived' + messageObj.signalingType;
-		var fnToCall = this[fnName];
 
-		if (fnToCall === undefined) {
-			/* 
-			If the fnToCall doesn't exist in the current object (signaling client)
-			We attempt to call it on a subscriber 
-			(at the moment, there is only one subscriber and we are hardcoding it, the webRTCConnection)
-			*/
-			// TODO: Check if thats causing the nego issues here
-			if (webRTCConnection.signalingClientMessagesTypes.indexOf(messageObj.signalingType) > -1) {
-				// message should be forwarded
-				webRTCConnection.onMessageReceived(messageObj);
-			} else {
-				console.log('No match was found in the WebRTC Messages Signaling Types.')
-			}
-		} else {
-			fnToCall(messageObj);
-		}
-	}
 
 	/*
 	*	Signaling Messages Specifics
@@ -146,25 +124,48 @@ function SignalingPanel(props) {
 	// 	setTDClients(tdClientsWorkerArray);
 	// }
 
-	// Instantiate Websocket and bing its handlers
-	let ws = new W3CWebSocket('ws://' + address + ':' + port);
-	// following code updates the state
-	// your component will call the render method
-	// so that your changes can be seen in your dom
-	ws.onopen = () => {
-		console.log('WebSocket Client Connected');
-	};
-	ws.onmessage = (message) => {
-		var messageObj = JSON.parse(message.data);
-		onMessageReceived(messageObj);
-	};
-	ws.onclose = () => {
-		console.log('WebSocket Client Closed');
-	}
-	ws.onerror = (error) => {
-		console.log(error);
-	}
-	console.log(ws);
+	// Should this live in the signaling panel??
+	// const onMessageReceived = (messageObj) => {
+	// 	console.log('Signaling, message received:', messageObj);
+	// 	var fnName = 'onMessageReceived' + messageObj.signalingType;
+	// 	var fnToCall = window[fnName];
+
+	// 	if (fnToCall === undefined) {
+	// 		/* 
+	// 		If the fnToCall doesn't exist in the current object (signaling client)
+	// 		We attempt to call it on a subscriber 
+	// 		(at the moment, there is only one subscriber and we are hardcoding it, the webRTCConnection)
+	// 		*/
+	// 		// // TODO: Check if thats causing the nego issues here
+	// 		// if (webRTCConnection.signalingClientMessagesTypes.indexOf(messageObj.signalingType) > -1) {
+	// 		// 	// message should be forwarded
+	// 		// 	webRTCConnection.onMessageReceived(messageObj);
+	// 		// } else {
+	// 		// 	console.log('No match was found in the WebRTC Messages Signaling Types.')
+	// 		// }
+	// 	} else {
+	// 		fnToCall(messageObj);
+	// 	}
+	// }
+
+	// // Instantiate Websocket and bing its handlers
+	// let ws = new W3CWebSocket('ws://' + address + ':' + port);
+	// // following code updates the state
+	// // your component will call the render method
+	// // so that your changes can be seen in your dom
+	// ws.onopen = () => {
+	// 	console.log('WebSocket Client Connected');
+	// };
+	// ws.onmessage = (message) => {
+	// 	var messageObj = JSON.parse(message.data);
+	// 	onMessageReceived(messageObj);
+	// };
+	// ws.onclose = () => {
+	// 	console.log('WebSocket Client Closed');
+	// }
+	// ws.onerror = (error) => {
+	// 	console.log(error);
+	// }
 
 	return <Container id="tdSignaling" style={ componentStyle }>
 		<h2>Signaling: </h2>
