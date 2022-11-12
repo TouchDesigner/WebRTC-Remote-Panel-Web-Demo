@@ -1,7 +1,7 @@
 import { Container, Button, TextField, List, ListItem, ListItemButton, ListItemText } from '@mui/material';
 
 function SignalingClientPanel(props) {
-    const { clients, address, port, connectedToServer} = props;
+    const { clients, address, port, connectedToServer, webRTCConnection } = props;
 
     const componentStyle = {
 		backgroundColor: "darkgray",
@@ -53,15 +53,15 @@ function SignalingClientPanel(props) {
 			<List className='clients'>
 				{
                     clients.map((wsClient, i) => {
-                        const { id, address } = wsClient;
-
+                        const { id, address, properties } = wsClient;
                         return <ListItem key={ id } style={ listStyle } disableGutters>
-                            <ListItemText primary= { address } style={ listItemTextStyle }></ListItemText>
+							<ListItemText primary= { address } style={ listItemTextStyle }></ListItemText>
+                            <ListItemText secondary= { id } style={ listItemTextStyle }></ListItemText>
                             <ListItemButton component='a'>
-                                <ListItemText primary='Start'></ListItemText>
+                                <ListItemText primary='Start' onClick={() => webRTCConnection.onCallStart(address, properties)}></ListItemText>
                             </ListItemButton>
                             <ListItemButton component='a'>
-                                <ListItemText primary='End'></ListItemText>
+                                <ListItemText primary='End' onClick={webRTCConnection.onCallEnd}></ListItemText>
                             </ListItemButton>
                         </ListItem>;
                     })
