@@ -5,6 +5,7 @@ import adapter from 'webrtc-adapter';
 
 /************************************************************************
 * WEBRTC SETUP
+* Uses Mozilla's Perfect Negotiation pattern https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Perfect_negotiation
 */
 class WebRTCConnection {
     constructor(signalingClient, reactSetMouseDataChannelHandler) {
@@ -37,6 +38,7 @@ class WebRTCConnection {
             ]
         });
         
+        // Assing event handlers to the peerConnection, bind (this) if the function calls object features in it
         this.peerConnection.onconnectionstatechange = this.handleConnectionStateChange;
         this.peerConnection.ondatachannel = this.handleDataChannel;
         this.peerConnection.onicecandidate = this.handleIceCandidate.bind(this);
@@ -55,10 +57,15 @@ class WebRTCConnection {
         
         this.mouseDataChannel = this.peerConnection.createDataChannel('MouseData');
         this.reactSetMouseDataChannelHandler(this.mouseDataChannel);
+
+        // THIS WAS NOT DEFINED
         // mouseDataChannel.onopen = handleSendChannelStatusChange;
         // mouseDataChannel.onclose = handleSendChannelStatusChange;
         
+        // NEVET USED, REMOVE???
         this.keyboardDataChannel = this.peerConnection.createDataChannel('KeyboardData');
+
+                // THIS WAS NOT DEFINED
         // keyboardDataChannel.onopen = handleSendChannelStatusChange;
         // keyboardDataChannel.onclose = handleSendChannelStatusChange;
     }
@@ -95,17 +102,16 @@ class WebRTCConnection {
     }
 
     onCallStart(address, properties) {
-		console.log('onCallStart begins', this);
-
+        // Assign the remote address as a target reference
 		this.target = address;
-        console.log(this.signalingClient)
-		// this.polite = this.signalingClient.webSocket.properties.timeJoined < properties.timeJoined
+
+        // For polite WebRTC negotiation, we need to make sure the webapp has not been there longer than the remote client
+		this.polite = this.signalingClient.properties.timeJoined < properties.timeJoined
 
 		this.createPeerConnection()
 				
 		this.peerConnection.addTransceiver('video', { direction: 'recvonly' });
 
-		console.log('onCallStart ends');
 	}
 
 	onCallEnd() {
@@ -124,9 +130,6 @@ class WebRTCConnection {
         // Get connection if unavailable, so that target can be filled, hacked in at the moment
         console.log('[WEBRTC] New ICE Candidate: ', event);
         if (event.candidate) { 
-            // TODO: debug why in some cases, no candidates are sent out but event triggers
-            // let target = this.signalingClient..tdClients[0].address;
-            
             this.onMessageSendingIce(
                 this.target,
                 event.candidate.candidate,
@@ -141,14 +144,12 @@ class WebRTCConnection {
     }
     
     handleIceConnectionStateChange(event) {
-        // console.log(event);
         switch (this.peerConnection.iceConnectionState) {
             case "default":
                 break;
             case "closed":
                 break;
             case "failed":
-                // deletePeerConnection();
                 this.peerConnection.restartIce();
                 break;
             default:
@@ -281,7 +282,7 @@ class WebRTCConnection {
         A new ICE candidate is received through the signaling client from another client,
         We need to add it to our RTCPeerConnection remote sdp
         */
-        console.log('New ICE Candidate received: ', messageObj);
+        console.log('[WEBRTC] New ICE Candidate received: ', messageObj);
         
         var candidate = new RTCIceCandidate(
             {
@@ -289,9 +290,7 @@ class WebRTCConnection {
                 sdpMLineIndex: messageObj.content.sdpMLineIndex,
                 sdpMid: messageObj.content.sdpMid
         });
-            
-        console.log(candidate)
-        
+                    
         this.peerConnection.addIceCandidate(candidate)
             .catch(error => {
                 console.log(error)
@@ -302,7 +301,7 @@ class WebRTCConnection {
     Signaling WebRTC Messages Specifics, Sending
     */
     onMessageSending(args) {
-        console.log(args);
+        console.log("[WEBRTC] Message sending", args);
     }
         
     onMessageSendingOffer(target, sdp) {
@@ -321,8 +320,12 @@ class WebRTCConnection {
             }
         };
         
-        console.log('Sending offer', msg);
+        console.log('[WEBRTC] Sending offer', msg);
+
+        // Use the signaling client websocket to send the ICE message
         this.signalingClient.webSocket.send(JSON.stringify(msg));
+
+        // Offer has been made
         this.makingOffer = false
     }
             
@@ -342,7 +345,9 @@ class WebRTCConnection {
             }
         };
         
-        console.log('Sending answer', msg);
+        console.log('[WEBRTC] Sending answer', msg);
+
+        // Use the signaling client websocket to send the ICE message
         this.signalingClient.webSocket.send(JSON.stringify(msg));
     }
             
@@ -364,7 +369,9 @@ class WebRTCConnection {
             }
         };
         
-        console.log('Sending ICE', msg);
+        console.log('[WEBRTC] Sending ICE', msg);
+
+        // Use the signaling client websocket to send the ICE message
         this.signalingClient.webSocket.send(JSON.stringify(msg));
     }
                 
@@ -372,7 +379,7 @@ class WebRTCConnection {
     RTCDataChannels Specifics
     */
     onDataReceived(event) {
-        console.log(event);
+        console.log("[WEBRTC] RTCDAtaChannels event",event);
     }
 }
             

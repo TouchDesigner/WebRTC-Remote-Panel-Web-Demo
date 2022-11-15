@@ -1,8 +1,14 @@
-import { Container, Button, TextField, List, ListItem, ListItemButton, ListItemText } from '@mui/material';
+import { Container, Button, TextField, List, ListItem, ListItemButton, ListItemText, Divider } from '@mui/material';
 
 function SignalingClientPanel(props) {
-    const { clients, address, port, connectedToServer, webRTCConnection } = props;
+	// React properties passed in App.js
+    const { 
+		clients, address, port, connectedToServer, 
+		signalingClient, webRTCConnection, 
+		setPortHandler, setAddressHandler 
+	} = props;
 
+	// CSS Styling
     const componentStyle = {
 		backgroundColor: "darkgray",
 		width: "20%"
@@ -10,7 +16,6 @@ function SignalingClientPanel(props) {
     const buttonStyle = {
         marginTop: 2 
     }
-
     const listStyle = {
 		display: 'inline-block'
 	}
@@ -19,41 +24,35 @@ function SignalingClientPanel(props) {
 		fontSize: '10px'
 	}
 
+	// Event handlers bound to text fields, they use the passed properties functions
     const handleAddressChange = (event) => {
-		// console.log('Signaling Host Address was changed');
-		// setAddress(event.target.value);
+		console.log('Signaling Host Address was changed');
+		setAddressHandler(event.target.value);
 	}
-
 	const handlePortChange = (event) => {
-		// console.log('Signaling Host Port was changed');
-		// setPort(event.target.value);
+		console.log('Signaling Host Port was changed');
+		setPortHandler(event.target.value);
 	}
-
-	const handleClickConnect = (event) => {
-		// // TODO: Check if already a WS instance
-		// if (ws && ws.OPEN) {
-		// 	var protocol = (window.location.protocol === 'https:') ? 'wss://' : 'ws://';
-		// 	ws = new W3CWebSocket(protocol + address + ':' + port);
-		// }
-
-		// // TODO: Set button to connected state
-		// console.log('Signaling Host was changed (or connected) to: ' + ws);
-	} 
 
 	return <Container id="tdSignaling" style={ componentStyle }>
 		<h2>Signaling server settings: </h2>
 		<h3>IP Address</h3>
-		<TextField variant='standard' label='Address' id='adress' defaultValue={ address }>{ address }</TextField>
+		<TextField variant='standard' label='Address' id='adress' defaultValue={ address } disabled={connectedToServer} onChange={(event) => handleAddressChange(event)}>{ address }</TextField>
         <h3>Port</h3>
-        <TextField variant='standard' label='Port' id='port' defaultValue={ port }></TextField>
-		<Button variant='contained' id='btnConnect' style={ buttonStyle } disabled={connectedToServer}>Connect</Button>
+        <TextField variant='standard' label='Port' id='port' defaultValue={ port } disabled={connectedToServer} onChange={(event) => handlePortChange(event)}></TextField>
+		<Button variant='contained' id='btnConnect' style={ buttonStyle } disabled={connectedToServer} onClick={() => signalingClient.open(address, port)}>Connect</Button>
+		<Button variant='contained' id='btnDisconnect' style={ buttonStyle } disabled={!connectedToServer} onClick={()=> signalingClient.close()}>Disconnect</Button>
         <h4>Connected to server: {connectedToServer ? 'Yes' : 'No'}</h4>
+		<Divider />
 		<Container id="tdSignalingList" disableGutters>
 			<h3>Signaling clients list </h3>
 			<List className='clients'>
 				{
+					// List out Websocket clients and add handlers to bind them to a Web RTC session
                     clients.map((wsClient, i) => {
                         const { id, address, properties } = wsClient;
+
+						// Returns a React component to be rendered
                         return <ListItem key={ id } style={ listStyle } disableGutters>
 							<ListItemText primary= { address } style={ listItemTextStyle }></ListItemText>
                             <ListItemText secondary= { id } style={ listItemTextStyle }></ListItemText>
@@ -61,7 +60,7 @@ function SignalingClientPanel(props) {
                                 <ListItemText primary='Start' onClick={() => webRTCConnection.onCallStart(address, properties)}></ListItemText>
                             </ListItemButton>
                             <ListItemButton component='a'>
-                                <ListItemText primary='End' onClick={webRTCConnection.onCallEnd}></ListItemText>
+                                <ListItemText primary='End' onClick={() => webRTCConnection.onCallEnd()}></ListItemText>
                             </ListItemButton>
                         </ListItem>;
                     })

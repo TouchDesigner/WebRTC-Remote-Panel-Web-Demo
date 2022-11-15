@@ -17,6 +17,7 @@ function App() {
 	const [webSocketClients, setWebSocketClients] = useState([]);
 	const [connectedToServer, setConnectedToServer] = useState(false);
 	const [mouseDataChannel, setMouseDataChannel] = useState();
+	const [signalingClient, setSignalingClient] = useState();
 	const [webRTCConnection, setWebRTCConnection ] = useState();
 
 	/************************************************************************
@@ -29,6 +30,7 @@ function App() {
 			let signalingClient = new SignalingClient(address, port, setWebSocketClients, setConnectedToServer);			
 			let webRTCConnection = new WebRTCConnection(signalingClient, setMouseDataChannel);
 
+			setSignalingClient(signalingClient);
 			setWebRTCConnection(webRTCConnection);
 
 			// Disconnect when done
@@ -48,7 +50,10 @@ function App() {
 				port={port} 
 				clients={ webSocketClients } 
 				connectedToServer={ connectedToServer }
+				signalingClient={ signalingClient }
 				webRTCConnection={ webRTCConnection }
+				setPortHandler={setPort}
+				setAddressHandler={setAddress}
 			/>
 			<MediaPanel mouseDataChannel={ mouseDataChannel } />
 		</Container>

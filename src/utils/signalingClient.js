@@ -4,40 +4,40 @@ class SignalingClient {
     constructor(address, port, reactSetWebsocketClientsHandler, reactSetConnectedToserverHandler) {
         this.connectedToServer = false;
         this.clients = [];
+        this.reactSetWebsocketClientsHandler = reactSetWebsocketClientsHandler;
+        this.reactSetConnectedToserverHandler = reactSetConnectedToserverHandler;
 
+        this.open(address, port);
+    }
 
+    open(address, port) {
         this.webSocket = new W3CWebSocket('ws://' + address + ':' + port);
-        // following code updates the state
-        // your component will call the render method
-        // so that your changes can be seen in your dom
-        console.log('OPENING WEB SOCKET')
+
         this.webSocket.onopen = () => {
             console.log('[WEBSOCKET] Client connected');
         };
         this.webSocket.onmessage = (message) => {
             var messageObj = JSON.parse(message.data);
-            console.log('[WEBSOCKET] Message received: ', messageObj);
             // Call message handler and bind passed react handlers
-            this.onWebSocketMessageReceived(messageObj, reactSetWebsocketClientsHandler, reactSetConnectedToserverHandler);
+            this.onWebSocketMessageReceived(messageObj, this.reactSetWebsocketClientsHandler, this.reactSetConnectedToserverHandler);
         };
         this.webSocket.onclose = () => {
             console.log('[WEBSOCKET] Client closed');
-        }
+        };
         this.webSocket.onerror = (error) => {
             console.error('[WEBSOCKET] ERROR ', error);
-        }
+        };
     }
 
     close() {
         this.webSocket.close();
+        // Make sur to call the react handler for proper state management
+        this.reactSetConnectedToserverHandler(false);
+        this.reactSetWebsocketClientsHandler([]);
     }
 
     setWebRTCConnection(webRTCConnection) {
         this.webRTCConnection = webRTCConnection;
-    }
-
-    closeSocket() {
-        this.webSocket.close();
     }
 
     /**
@@ -50,21 +50,25 @@ class SignalingClient {
     * should be set in the clients property of the content dictionary.
     * @param {*} message.clients
     */
-    onClientsMessage(message) {
+    onClientsMessage(message, previousClients) {
         // let wsClientsTempArray = [];
         let { clients } = message.content;
-        console.log(clients.length + ' listed clients');
+        
+        // var wsClientsTempArray= [];
         // clients.some(function (client) {
         // 	let { id, address, properties } = client;
         
         // 	// TODO: Make sure self is not added to this list
         // 	// This method should be called in the Map, we should be storing an object
         // 	let newWSClient = { id, address, properties };
-        // 	wsClientsTempArray = [...webSocketClients];
+        // 	wsClientsTempArray = [...previousClients];
         // 	wsClientsTempArray.push(newWSClient);
         
         // 	return wsClientsTempArray;
         // });
+
+        // console.log(clients, wsClientsTempArray);
+
         return clients;
     }
 
@@ -80,6 +84,7 @@ class SignalingClient {
     * @param {*} message 
     */
     onClientEnter(message) {
+        console.log("[WEBSOCKET] On Client Enter", message);
         // var exists = false
         
         // setTDClients(tdClients.some(function (tdClient) {
@@ -120,8 +125,13 @@ class SignalingClient {
     * @param {*} message.content the client infos
     */
     onClientEntered(message) {
-        // In the previous code it was setting it to a component object, which was never used
-        // console.log('Client Enter', message.content);
+        const { self } = message.content;
+        // Here we receive de React app websocket client`s information
+        console.log("[WEBSOCKET] On Client Entered", self);
+        // Assign properties of the websocket to this instance
+        this.id = self.id;
+        this.assignedAddress = self.address;
+        this.properties = self.properties;
     }
 
     /**
@@ -134,7 +144,8 @@ class SignalingClient {
     * 
     * @param {*} message.content the client infos
     */
-    onClientExit(messageObj) {
+    onClientExit(message) {
+        console.log("[WEBSOCKET] On Client Exit", message);
         // var tdClientsWorkerArray = [...tdClients];
         // for (var i = tdClientsWorkerArray.length - 1; i >= 0; --i) {
         // 	if (tdClientsWorkerArray[i].id === messageObj.content.id) {
@@ -154,35 +165,29 @@ class SignalingClient {
         
         switch(signalingType) {
             case 'Clients':
-                // console.log('Received Clients message from TD');
-                let clients = this.onClientsMessage(messageObject);
+                let clients = this.onClientsMessage(messageObject, this.clients);
                 clientsReactHandler(clients);
                 break;
             case 'ClientEnter':
-                // console.log('Received ClientEnter message from TD');
                 this.onClientEnter(messageObject);
                 break;
             case 'ClientEntered':
-                // console.log('Received ClientEntered message from TD');
                 this.onClientEntered(messageObject);
                 connectedReactHandler(true);
                 break;
             case 'ClientExit':
-                // console.log('Received ClientExit message from TD');
                 this.onClientExit(messageObject);
                 break;
             default:
+                // If not a know message, we delegate to the WebRTC Connection for negotiation
                 let signalingClientMessagesTypes = ['Offer', 'Answer', 'Ice'];
-                /* 
-                We attempt to call it on a subscriber 
-                (at the moment, there is only one subscriber and we are hardcoding it, the webRTCConnection)
-                */
-                // TODO: Check if thats causing the nego issues here
+                
+                // If the message contains signaling negotiation types and the Web RTC Connection reference object has been set
                 if (signalingClientMessagesTypes.indexOf(messageObject.signalingType) > -1 && !!this.webRTCConnection) {
                     // Delegate to the WebRTCConnection reference object
                     this.webRTCConnection.onMessageReceived(messageObject);
                 } else {
-                    console.log('No match was found in the WebRTC Messages Signaling Types.')
+                    console.log('[] No match was found in the WebRTC Messages Signaling Negociation Types.')
                 }
         }
     }

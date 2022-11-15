@@ -11,6 +11,7 @@ function MediaPanel(props) {
         transform: 'scaleX(-1)'
     }
 
+	// Send data on both mouse down and move to mock interactions on TD leapPaint
 	const sendMouseData = (event) => {
 		// Get video container size
 		if (!mouseDataChannel) {
@@ -23,6 +24,7 @@ function MediaPanel(props) {
 		var width = parseInt(comStyle.getPropertyValue("width"), 10);
 		var height = parseInt(comStyle.getPropertyValue("height"), 10);
 		
+		// Mouse event related to Derivatives JSON API
 		let mouseEventDict = {
 			lselect: event.buttons === 1 ? true : false,
 			mselect: event.buttons === 4 ? true : false,
@@ -30,13 +32,11 @@ function MediaPanel(props) {
 			insideu: 1 - (event.nativeEvent.offsetX / width),
 			insidev: 1 - (event.nativeEvent.offsetY / height)
 		}
-	
-		sendData(JSON.stringify(mouseEventDict), mouseDataChannel);
-	}
 
-	const sendData = (data, dataChannel) => {
-		if (dataChannel.readyState === 'open') {
-			dataChannel.send(data);
+		if (mouseDataChannel.readyState === 'open') {
+			mouseDataChannel.send(
+				JSON.stringify(mouseEventDict)
+			);
 		}
 	}
 
