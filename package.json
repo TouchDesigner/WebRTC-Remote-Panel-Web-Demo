@@ -1,11 +1,13 @@
 {
   "name": "tdwebrtcbrowser",
   "version": "0.1.0",
+  "homepage": "https://touchdesigner.github.io/WebRTC-Remote-Panel-Web-Demo",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
     "@mui/material": "^5.2.8",
+    "gh-pages": "^4.0.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-scripts": "5.0.0",
@@ -14,6 +16,8 @@
     "websocket": "^1.0.34"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "eject": "react-scripts eject"
