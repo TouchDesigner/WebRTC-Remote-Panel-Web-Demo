@@ -40,7 +40,7 @@ class WebRTCConnection {
         });
         
         // Assing event handlers to the peerConnection, bind (this) if the function calls object features in it
-        this.peerConnection.onconnectionstatechange = this.handleConnectionStateChange;
+        this.peerConnection.onconnectionstatechange = this.handleConnectionStateChange.bind(this);
         this.peerConnection.ondatachannel = this.handleDataChannel;
         this.peerConnection.onicecandidate = this.handleIceCandidate.bind(this);
         this.peerConnection.onicecandidateerror = this.handleIceCandidateError.bind(this);
@@ -119,6 +119,9 @@ class WebRTCConnection {
     
     handleConnectionStateChange(event) {
         console.log('[WEBRTC] Connection State Change: ', event);
+
+        if(event.target.connectionState === 'disconnected')
+            this.deletePeerConnection();
     }
     
     handleDataChannel(rtcDataChannelEvent) {
