@@ -59,15 +59,12 @@ class WebRTCConnection {
         this.mouseDataChannel = this.peerConnection.createDataChannel('MouseData');
         this.reactSetMouseDataChannelHandler(this.mouseDataChannel);
 
-        // THIS WAS NOT DEFINED
         // mouseDataChannel.onopen = handleSendChannelStatusChange;
         // mouseDataChannel.onclose = handleSendChannelStatusChange;
         
-        // NEVET USED, REMOVE???
         this.keyboardDataChannel = this.peerConnection.createDataChannel('KeyboardData');
         this.reactSetKeyboardDataChannelHandler(this.keyboardDataChannel);
 
-                // THIS WAS NOT DEFINED
         // keyboardDataChannel.onopen = handleSendChannelStatusChange;
         // keyboardDataChannel.onclose = handleSendChannelStatusChange;
     }

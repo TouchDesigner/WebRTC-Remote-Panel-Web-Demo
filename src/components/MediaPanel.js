@@ -3,7 +3,7 @@ import Container from '@mui/material/Container';
 function MediaPanel(props) {
     const { mouseDataChannel, keyboardDataChannel } = props;
 
-    const componentStyle = {
+	const componentStyle = {
         backgroundColor: 'lightGrey'
     }
 
@@ -41,11 +41,10 @@ function MediaPanel(props) {
 	}
 
 	const sendKeyboardData = (event) => {
-		if (!keyboardDataChannel) {
-			console.log('The dataChannel does not exist, aborting.')
-			return;
-		}
-
+		// if (!keyboardDataChannel) {
+		// 	console.log('The dataChannel does not exist, aborting.')
+		// 	return;
+		// }
 		let keyboardEventDict = {
 			type: event.type,
 			key: event.key,
@@ -73,7 +72,8 @@ function MediaPanel(props) {
 			controls={ false }
 			onMouseDown={ sendMouseData }
 			onMouseMove={ sendMouseData }
-			onKeyPress= { sendKeyboardData }
+			onKeyDown={ sendKeyboardData }
+			tabIndex="1"
 		>
 		</video>
 	</Container>; 

@@ -14,7 +14,7 @@ class SignalingClient {
     }
 
     open(address, port, clientsHandler, connectedHandler) {
-        this.webSocket = new W3CWebSocket('ws://' + address + ':' + port);
+        this.webSocket = new W3CWebSocket(address + ':' + port);
 
         this.webSocket.onopen = () => {
             console.log('[WEBSOCKET] Client connected');
