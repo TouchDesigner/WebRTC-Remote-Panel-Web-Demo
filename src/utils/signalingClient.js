@@ -1,28 +1,38 @@
 import { w3cwebsocket as W3CWebSocket } from "websocket";
 
 class SignalingClient {
-    constructor(address, port, reactSetWebsocketClientsHandler, reactSetConnectedToserverHandler) {
+    constructor(address, port, reactSetWebsocketClientsHandler, reactSetConnectedToServerHandler) {
         this.connectedToServer = false;
         this.clients = [];
-        this.reactSetWebsocketClientsHandler = reactSetWebsocketClientsHandler;
-        this.reactSetConnectedToserverHandler = reactSetConnectedToserverHandler;
 
-        this.open(address, port);
+        this.open(address, port, reactSetWebsocketClientsHandler, reactSetConnectedToServerHandler);
+
+        this.reactClientsHandler = reactSetWebsocketClientsHandler;
+        this.reactConnectedHandler = reactSetConnectedToServerHandler;
+
+        this.id = -1;
     }
 
-    open(address, port) {
+    open(address, port, clientsHandler, connectedHandler) {
         this.webSocket = new W3CWebSocket('ws://' + address + ':' + port);
 
         this.webSocket.onopen = () => {
             console.log('[WEBSOCKET] Client connected');
+            this.reactConnectedHandler(true);
         };
         this.webSocket.onmessage = (message) => {
             var messageObj = JSON.parse(message.data);
             // Call message handler and bind passed react handlers
-            this.onWebSocketMessageReceived(messageObj, this.reactSetWebsocketClientsHandler, this.reactSetConnectedToserverHandler);
+            this.onWebSocketMessageReceived(messageObj);
+
+            // Filter out our connection from the list
+            this.clients.filter(client => client.id !== this.id);
+            // Pass in clients as a new array instance or it wont update
+            this.reactClientsHandler([...this.clients]);
         };
         this.webSocket.onclose = () => {
             console.log('[WEBSOCKET] Client closed');
+            this.reactConnectedHandler(false);
         };
         this.webSocket.onerror = (error) => {
             console.error('[WEBSOCKET] ERROR ', error);
@@ -32,8 +42,8 @@ class SignalingClient {
     close() {
         this.webSocket.close();
         // Make sur to call the react handler for proper state management
-        this.reactSetConnectedToserverHandler(false);
-        this.reactSetWebsocketClientsHandler([]);
+        this.reactConnectedHandler(false);
+        this.reactClientsHandler([]);
     }
 
     setWebRTCConnection(webRTCConnection) {
@@ -42,6 +52,8 @@ class SignalingClient {
 
     /**
     * Update the websocket clients list to the one provided by the server
+    * This handler is received when joining a session and will contain the clients
+    * connected at the current time.
     * 
     * API Description:
     * A signaling message sent from the signaling server to a client 
@@ -50,30 +62,15 @@ class SignalingClient {
     * should be set in the clients property of the content dictionary.
     * @param {*} message.clients
     */
-    onClientsMessage(message, previousClients) {
-        // let wsClientsTempArray = [];
+    onClientsMessage(message) {
+        console.log("[WEBSOCKET] On Clients", message);
         let { clients } = message.content;
-        
-        // var wsClientsTempArray= [];
-        // clients.some(function (client) {
-        // 	let { id, address, properties } = client;
-        
-        // 	// TODO: Make sure self is not added to this list
-        // 	// This method should be called in the Map, we should be storing an object
-        // 	let newWSClient = { id, address, properties };
-        // 	wsClientsTempArray = [...previousClients];
-        // 	wsClientsTempArray.push(newWSClient);
-        
-        // 	return wsClientsTempArray;
-        // });
-
-        // console.log(clients, wsClientsTempArray);
 
         return clients;
     }
 
     /**
-    * 
+    * Received when a new client joins the session
     * 
     * API Description:
     * A signaling message sent from the signaling server to clients in the signaling session 
@@ -83,38 +80,23 @@ class SignalingClient {
     * 
     * @param {*} message 
     */
-    onClientEnter(message) {
+    onClientEnter(message, previousClients) {
         console.log("[WEBSOCKET] On Client Enter", message);
-        // var exists = false
+        const { id, address, properties } = message.content.client;
+
+        let index = previousClients.findIndex(object => object.id === id);
+            console.log(index)
+        // index is -1 if the desired if is not owned by any client in previousClients
+        if(index === -1) {
+            previousClients.push({id, address, properties});
+        }
         
-        // setTDClients(tdClients.some(function (tdClient) {
-        // 	if (tdClient.id === messageObj.content.client.id) {
-        // 		exists = true;
-        // 		return true;
-        // 	} else {
-        // 		return false;
-        // 	}
-        // }));
-        
-        // if (exists === true) {
-        // 	console.log('tdClient ' + messageObj.content.client.id + ' is already known.');
-        // } else {
-        // 	var newTDClient = WebSocketClientListItem({ 
-        // 		id: messageObj.content.client.id, 
-        // 		address: messageObj.content.client.address, 
-        // 		properties: messageObj.content.client.properties, 
-        // 		signalingClient: this 
-        // 	});
-        
-        // 	var tdClientsWorkerArray = [...tdClients];
-        // 	tdClientsWorkerArray.push(newTDClient);
-        // 	setTDClients(tdClientsWorkerArray);
-        // 	console.log('The client with id ' + newTDClient.id + ' joined the session.');
-        // }
+        return previousClients;
     }
 
     /**
     * Confirmation from the server that we are connected to its signaling session
+    * The contained informations are relative to this websocket client.
     * 
     * API Description:
     * A signaling message sent from the signaling server to a client to acknowledge that the client entered 
@@ -125,9 +107,10 @@ class SignalingClient {
     * @param {*} message.content the client infos
     */
     onClientEntered(message) {
-        const { self } = message.content;
         // Here we receive de React app websocket client`s information
-        console.log("[WEBSOCKET] On Client Entered", self);
+        console.log("[WEBSOCKET] On Client Entered");
+        const { self } = message.content;
+        console.log(self);
         // Assign properties of the websocket to this instance
         this.id = self.id;
         this.assignedAddress = self.address;
@@ -144,39 +127,32 @@ class SignalingClient {
     * 
     * @param {*} message.content the client infos
     */
-    onClientExit(message) {
+    onClientExit(message, previousClients) {
         console.log("[WEBSOCKET] On Client Exit", message);
-        // var tdClientsWorkerArray = [...tdClients];
-        // for (var i = tdClientsWorkerArray.length - 1; i >= 0; --i) {
-        // 	if (tdClientsWorkerArray[i].id === messageObj.content.id) {
-        // 		tdClientsWorkerArray.splice(i, 1);
-        // 	}
-        // }
-        
-        // setTDClients(tdClientsWorkerArray);
-        // console.log('The client with id ' + messageObj.content.id + ' left the session.');
+        const { client } = message.content;
+        const { id } = client;
+
+        return previousClients.filter(c => c.id !== id);
     }
 
     // Route websockets message to the right handler
-    onWebSocketMessageReceived(messageObject, clientsReactHandler, connectedReactHandler) {
+    onWebSocketMessageReceived(messageObject) {
         // Message follow the TD Signaling API JSON Schema syntax
         // See https://docs.derivative.ca/Palette:signalingServer#Signaling_API
         const {signalingType} = messageObject;
         
         switch(signalingType) {
             case 'Clients':
-                let clients = this.onClientsMessage(messageObject, this.clients);
-                clientsReactHandler(clients);
+                this.clients = this.onClientsMessage(messageObject);
                 break;
             case 'ClientEnter':
-                this.onClientEnter(messageObject);
+                this.clients = this.onClientEnter(messageObject, this.clients);
                 break;
             case 'ClientEntered':
                 this.onClientEntered(messageObject);
-                connectedReactHandler(true);
                 break;
             case 'ClientExit':
-                this.onClientExit(messageObject);
+                this.clients = this.onClientExit(messageObject, this.clients);
                 break;
             default:
                 // If not a know message, we delegate to the WebRTC Connection for negotiation

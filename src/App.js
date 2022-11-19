@@ -40,20 +40,20 @@ function App() {
 			}
 	  },
 	[]);
-
+	
 	return <Container id='tdApp' maxWidth='x1'>
 		<CssBaseline></CssBaseline>
 		<h1>TD WebRTC Web Demo 🍌</h1>
 		<Container maxWidth='x1' disableGutters style={{ display: 'inline-flex'}}>
 			<SignalingClientPanel 
-				address={address} 
-				port={port} 
+				address={ address } 
+				port={ port } 
 				clients={ webSocketClients } 
 				connectedToServer={ connectedToServer }
 				signalingClient={ signalingClient }
 				webRTCConnection={ webRTCConnection }
-				setPortHandler={setPort}
-				setAddressHandler={setAddress}
+				setPortHandler={ setPort }
+				setAddressHandler={ setAddress }
 			/>
 			<MediaPanel mouseDataChannel={ mouseDataChannel } />
 		</Container>
