@@ -1,19 +1,19 @@
 import Container from '@mui/material/Container';
 
 function MediaPanel(props) {
-    const { mouseDataChannel, } = props;
+    const { mouseDataChannel, keyboardDataChannel } = props;
 
     const componentStyle = {
         backgroundColor: 'lightGrey'
     }
 
     const videoStyle = {
-        transform: 'scaleX(-1)'
+        transform: 'scaleX(-1)',
+		width: '100%'
     }
 
 	// Send data on both mouse down and move to mock interactions on TD leapPaint
 	const sendMouseData = (event) => {
-		// Get video container size
 		if (!mouseDataChannel) {
 			console.log('The dataChannel does not exist, aborting.')
 			return;
@@ -40,17 +40,40 @@ function MediaPanel(props) {
 		}
 	}
 
+	const sendKeyboardData = (event) => {
+		if (!keyboardDataChannel) {
+			console.log('The dataChannel does not exist, aborting.')
+			return;
+		}
+
+		let keyboardEventDict = {
+			type: event.type,
+			key: event.key,
+			code: event.code,
+			location: event.location,
+			repeat: event.repeat,
+			isComposing: event.isComposing,
+			ctrlKey: event.ctrlKey,
+			shiftKey: event.shiftKey,
+			altKey: event.altKey,
+			metaKey: event.metaKey
+		}
+
+		if (keyboardDataChannel.readyState === 'open') {
+			keyboardDataChannel.send(JSON.stringify(keyboardEventDict));
+		}
+	}
+
 	return <Container id="webRTCViewer" style={ componentStyle } disableGutters>
 		<video 
 			id="remoteVideo"
-			width="100%"
-			height="100%"
 			style={ videoStyle }
 			autoPlay
 			muted={ false }
 			controls={ false }
 			onMouseDown={ sendMouseData }
 			onMouseMove={ sendMouseData }
+			onKeyPress= { sendKeyboardData }
 		>
 		</video>
 	</Container>; 

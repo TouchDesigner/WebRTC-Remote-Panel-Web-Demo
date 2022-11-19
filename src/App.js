@@ -17,6 +17,7 @@ function App() {
 	const [webSocketClients, setWebSocketClients] = useState([]);
 	const [connectedToServer, setConnectedToServer] = useState(false);
 	const [mouseDataChannel, setMouseDataChannel] = useState();
+	const [keyboardDataChannel, setKeyboardDataChannel] = useState();
 	const [signalingClient, setSignalingClient] = useState();
 	const [webRTCConnection, setWebRTCConnection ] = useState();
 
@@ -28,7 +29,7 @@ function App() {
 		() => {
 			// Instantiate Websocket and bing its handlers
 			let signalingClient = new SignalingClient(address, port, setWebSocketClients, setConnectedToServer);			
-			let webRTCConnection = new WebRTCConnection(signalingClient, setMouseDataChannel);
+			let webRTCConnection = new WebRTCConnection(signalingClient, setMouseDataChannel, setKeyboardDataChannel);
 
 			setSignalingClient(signalingClient);
 			setWebRTCConnection(webRTCConnection);
@@ -44,7 +45,7 @@ function App() {
 	return <Container id='tdApp' maxWidth='x1'>
 		<CssBaseline></CssBaseline>
 		<h1>TD WebRTC Web Demo 🍌</h1>
-		<Container maxWidth='x1' disableGutters style={{ display: 'inline-flex'}}>
+		<Container maxWidth='x1' disableGutters sx={{ display: 'inline-flex' }}>
 			<SignalingClientPanel 
 				address={ address } 
 				port={ port } 
@@ -55,7 +56,7 @@ function App() {
 				setPortHandler={ setPort }
 				setAddressHandler={ setAddress }
 			/>
-			<MediaPanel mouseDataChannel={ mouseDataChannel } />
+			<MediaPanel mouseDataChannel={ mouseDataChannel } keyboardDataChannel= { keyboardDataChannel } />
 		</Container>
 	</Container>;
 }

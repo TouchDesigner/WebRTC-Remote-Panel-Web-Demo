@@ -8,12 +8,13 @@ import adapter from 'webrtc-adapter';
 * Uses Mozilla's Perfect Negotiation pattern https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Perfect_negotiation
 */
 class WebRTCConnection {
-    constructor(signalingClient, reactSetMouseDataChannelHandler) {
+    constructor(signalingClient, reactSetMouseDataChannelHandler, reactSetKeyboardDataChannelHandler) {
         this.signalingClient = signalingClient;
         // Ensure signaling client has access to this instance to delegate messages
         this.signalingClient.setWebRTCConnection(this);
 
         this.reactSetMouseDataChannelHandler = reactSetMouseDataChannelHandler;
+        this.reactSetKeyboardDataChannelHandler = reactSetKeyboardDataChannelHandler;
         
         this.mediaConstraints = {
             audio: true,
@@ -64,6 +65,7 @@ class WebRTCConnection {
         
         // NEVET USED, REMOVE???
         this.keyboardDataChannel = this.peerConnection.createDataChannel('KeyboardData');
+        this.reactSetKeyboardDataChannelHandler(this.keyboardDataChannel);
 
                 // THIS WAS NOT DEFINED
         // keyboardDataChannel.onopen = handleSendChannelStatusChange;
