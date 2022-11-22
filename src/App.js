@@ -12,8 +12,8 @@ import SignalingClient from './utils/signalingClient';
 
 function App() {
 	// App state management à la React
-	const [port, setPort] = useState(9980);
-	const [address, setAddress] = useState('ws://127.0.0.1');
+	const [port, setPort] = useState(443);
+	const [address, setAddress] = useState('wss://127.0.0.1');
 	const [webSocketClients, setWebSocketClients] = useState([]);
 	const [connectedToServer, setConnectedToServer] = useState(false);
 	const [mouseDataChannel, setMouseDataChannel] = useState();
