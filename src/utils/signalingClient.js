@@ -30,12 +30,12 @@ class SignalingClient {
             // Pass in clients as a new array instance or it wont update
             this.reactClientsHandler([...this.clients]);
         };
-        this.webSocket.onclose = () => {
-            console.log('[WEBSOCKET] Client closed');
+        this.webSocket.onclose = (event) => {
+            console.log('[WEBSOCKET] Client closed ', event.code, event.reason);
             this.reactConnectedHandler(false);
         };
         this.webSocket.onerror = (error) => {
-            console.error('[WEBSOCKET] ERROR ', error);
+            console.error('[WEBSOCKET] ERROR', error);
         };
     }
 
