@@ -99,3 +99,19 @@ You can now use those files on the signalingServer COMP
 # JSON Schemas
 
 All of TD's own Signaling API is defined at the following repository with various schema files: https://github.com/TouchDesigner/SignalingAPI
+
+# Publishing (for devs only and contributors)
+
+Updating the Github hosted page can be done with write permissions using 
+
+```
+npm run deploy
+```
+
+As per: https://create-react-app.dev/docs/deployment/
+
+The homepage in package.json should be of the likes of 
+
+```
+"homepage": "https://myusername.github.io/my-app",
+```
