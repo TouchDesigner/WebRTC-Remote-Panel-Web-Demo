@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import Container from '@mui/material/Container';
+import Grid from '@mui/material/Grid';
 
 // Import local components
 import SignalingClientPanel from './components/SignalingClientPanel';
@@ -42,10 +43,10 @@ function App() {
 	  },
 	[]);
 	
-	return <Container id='tdApp' maxWidth='x1'>
-		<CssBaseline></CssBaseline>
+	return <Container id='tdApp' maxWidth='xl'>
+		<CssBaseline />
 		<h1>TD WebRTC Web Demo 🍌</h1>
-		<Container maxWidth='x1' disableGutters sx={{ display: 'inline-flex' }}>
+		<Grid container spacing={{ xl: 2 }} columns={{ xl: 1 }}>
 			<SignalingClientPanel 
 				address={ address } 
 				port={ port } 
@@ -57,7 +58,7 @@ function App() {
 				setAddressHandler={ setAddress }
 			/>
 			<MediaPanel mouseDataChannel={ mouseDataChannel } keyboardDataChannel= { keyboardDataChannel } />
-		</Container>
+		</Grid>
 	</Container>;
 }
 

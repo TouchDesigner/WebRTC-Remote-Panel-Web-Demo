@@ -41,10 +41,6 @@ function MediaPanel(props) {
 	}
 
 	const sendKeyboardData = (event) => {
-		// if (!keyboardDataChannel) {
-		// 	console.log('The dataChannel does not exist, aborting.')
-		// 	return;
-		// }
 		let keyboardEventDict = {
 			type: event.type,
 			key: event.key,

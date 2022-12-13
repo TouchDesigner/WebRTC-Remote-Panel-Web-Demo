@@ -1,5 +1,3 @@
-// import { w3cwebsocket as W3CWebSocket } from "websocket";
-
 class SignalingClient {
     constructor(address, port, reactSetWebsocketClientsHandler, reactSetConnectedToServerHandler) {
         this.connectedToServer = false;
@@ -15,7 +13,6 @@ class SignalingClient {
 
     open(address, port, clientsHandler, connectedHandler) {
         this.webSocket = new WebSocket(address + ':' + port)
-        // this.webSocket = new W3CWebSocket(address + ':' + port);
 
         this.webSocket.onopen = () => {
             console.log('[WEBSOCKET] Client connected');

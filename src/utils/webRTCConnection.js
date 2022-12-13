@@ -3,7 +3,7 @@
 // eslint-disable-next-line  no-unused-vars
 import adapter from 'webrtc-adapter';
 
-/************************************************************************
+/*
 * WEBRTC SETUP
 * Uses Mozilla's Perfect Negotiation pattern https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Perfect_negotiation
 */
@@ -58,15 +58,9 @@ class WebRTCConnection {
         
         this.mouseDataChannel = this.peerConnection.createDataChannel('MouseData');
         this.reactSetMouseDataChannelHandler(this.mouseDataChannel);
-
-        // mouseDataChannel.onopen = handleSendChannelStatusChange;
-        // mouseDataChannel.onclose = handleSendChannelStatusChange;
         
         this.keyboardDataChannel = this.peerConnection.createDataChannel('KeyboardData');
         this.reactSetKeyboardDataChannelHandler(this.keyboardDataChannel);
-
-        // keyboardDataChannel.onopen = handleSendChannelStatusChange;
-        // keyboardDataChannel.onclose = handleSendChannelStatusChange;
     }
     
     deletePeerConnection() {
@@ -87,8 +81,7 @@ class WebRTCConnection {
             
             if (remoteVideo.srcObject) {
                 remoteVideo.srcObject.getTracks().forEach(track => track.stop());
-            }
-            
+            }    
             
             this.mouseDataChannel.close();
             this.keyboardDataChannel.close();
@@ -110,7 +103,6 @@ class WebRTCConnection {
 		this.createPeerConnection()
 				
 		this.peerConnection.addTransceiver('video', { direction: 'recvonly' });
-
 	}
 
 	onCallEnd() {
@@ -316,7 +308,7 @@ class WebRTCConnection {
             },
             signalingType: "Offer",
             sender: null, // will be filled by server
-            target: target, // TODO: to fill, if None, server will broadcast on domain
+            target: target,
             content: {
                 sdp: sdp // peerConnection.localDescription
             }
@@ -341,7 +333,7 @@ class WebRTCConnection {
             },
             signalingType: "Answer",
             sender: null, // will be filled by server
-            target: target, // TODO: to fill, if None, server will broadcast on domain
+            target: target,
             content: {
                 sdp: sdp // peerConnection.localDescription
             }
@@ -363,7 +355,7 @@ class WebRTCConnection {
             },
             signalingType: "Ice",
             sender: null, // will be filled by server
-            target: target, // TODO: to fill, if None, server will broadcast on domain
+            target: target,
             content: {
                 sdpCandidate: sdpCandidate, // peerConnection.localDescription
                 sdpMLineIndex: sdpMLineIndex, 

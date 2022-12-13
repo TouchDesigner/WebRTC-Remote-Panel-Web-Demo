@@ -1,4 +1,4 @@
-import { Container, Button, TextField, List, ListItem, ListItemButton, ListItemText, Divider } from '@mui/material';
+import { Container, Button, TextField, List, ListItem, ListItemButton, ListItemText, Divider, useTheme, useMediaQuery } from '@mui/material';
 
 function SignalingClientPanel(props) {
 	// React properties passed in App.js
@@ -8,10 +8,16 @@ function SignalingClientPanel(props) {
 		setPortHandler, setAddressHandler 
 	} = props;
 
+	const theme = useTheme()
+	const isSmall = useMediaQuery(theme.breakpoints.down("sm"))
+	const isMedium = useMediaQuery(theme.breakpoints.down("md"))
+	const isLarge = useMediaQuery(theme.breakpoints.down("lg"))
+	const isXLarge = useMediaQuery(theme.breakpoints.down("xl"))
+
 	// CSS Styling
     const componentStyle = {
 		backgroundColor: "darkgray",
-		width: "20%"
+		width: isMedium ? '100%' : isLarge ? '100%' : isXLarge ? '100%' :'20%',
 	}
     const buttonStyle = {
         marginTop: 2 
