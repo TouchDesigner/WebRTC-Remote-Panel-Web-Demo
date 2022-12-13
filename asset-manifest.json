@@ -1,12 +1,12 @@
 {
   "files": {
-    "main.js": "/WebRTC-Remote-Panel-Web-Demo/static/js/main.da256a71.js",
+    "main.js": "/WebRTC-Remote-Panel-Web-Demo/static/js/main.298beee0.js",
     "static/js/787.8dff1247.chunk.js": "/WebRTC-Remote-Panel-Web-Demo/static/js/787.8dff1247.chunk.js",
     "index.html": "/WebRTC-Remote-Panel-Web-Demo/index.html",
-    "main.da256a71.js.map": "/WebRTC-Remote-Panel-Web-Demo/static/js/main.da256a71.js.map",
+    "main.298beee0.js.map": "/WebRTC-Remote-Panel-Web-Demo/static/js/main.298beee0.js.map",
     "787.8dff1247.chunk.js.map": "/WebRTC-Remote-Panel-Web-Demo/static/js/787.8dff1247.chunk.js.map"
   },
   "entrypoints": [
-    "static/js/main.da256a71.js"
+    "static/js/main.298beee0.js"
   ]
 }
