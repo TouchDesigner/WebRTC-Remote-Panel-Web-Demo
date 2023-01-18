@@ -68,6 +68,7 @@ function MediaPanel(props) {
 			controls={ false }
 			onMouseDown={ sendMouseData }
 			onMouseMove={ sendMouseData }
+			onMouseUp={ sendMouseData } 
 			onKeyDown={ sendKeyboardData }
 			tabIndex="1"
 		>
