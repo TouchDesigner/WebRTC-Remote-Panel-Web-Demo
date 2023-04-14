@@ -19,6 +19,7 @@ function App() {
 	const [connectedToServer, setConnectedToServer] = useState(false);
 	const [mouseDataChannel, setMouseDataChannel] = useState();
 	const [keyboardDataChannel, setKeyboardDataChannel] = useState();
+	const [vectorsStateDataChannel, setVectorsStateDataChannel] = useState();
 	const [signalingClient, setSignalingClient] = useState();
 	const [webRTCConnection, setWebRTCConnection ] = useState();
 
@@ -30,7 +31,7 @@ function App() {
 		() => {
 			// Instantiate Websocket and bing its handlers
 			let signalingClient = new SignalingClient(address, port, setWebSocketClients, setConnectedToServer);			
-			let webRTCConnection = new WebRTCConnection(signalingClient, setMouseDataChannel, setKeyboardDataChannel);
+			let webRTCConnection = new WebRTCConnection(signalingClient, setMouseDataChannel, setKeyboardDataChannel, setVectorsStateDataChannel);
 
 			setSignalingClient(signalingClient);
 			setWebRTCConnection(webRTCConnection);
@@ -57,7 +58,7 @@ function App() {
 				setPortHandler={ setPort }
 				setAddressHandler={ setAddress }
 			/>
-			<MediaPanel mouseDataChannel={ mouseDataChannel } keyboardDataChannel= { keyboardDataChannel } />
+			<MediaPanel mouseDataChannel={ mouseDataChannel } keyboardDataChannel= { keyboardDataChannel } vectorsStateDataChannel= { vectorsStateDataChannel } />
 		</Grid>
 	</Container>;
 }

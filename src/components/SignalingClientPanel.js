@@ -9,7 +9,6 @@ function SignalingClientPanel(props) {
 	} = props;
 
 	const theme = useTheme()
-	const isSmall = useMediaQuery(theme.breakpoints.down("sm"))
 	const isMedium = useMediaQuery(theme.breakpoints.down("md"))
 	const isLarge = useMediaQuery(theme.breakpoints.down("lg"))
 	const isXLarge = useMediaQuery(theme.breakpoints.down("xl"))

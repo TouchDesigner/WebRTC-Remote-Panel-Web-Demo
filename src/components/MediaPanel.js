@@ -1,7 +1,10 @@
 import Container from '@mui/material/Container';
+import ToggleButton from '@mui/material/ToggleButton';
 
 function MediaPanel(props) {
-    const { mouseDataChannel, keyboardDataChannel } = props;
+    const { mouseDataChannel, keyboardDataChannel, vectorsStateDataChannel } = props;
+
+	var selected = false
 
 	const componentStyle = {
         backgroundColor: 'lightGrey'
@@ -59,6 +62,18 @@ function MediaPanel(props) {
 		}
 	}
 
+	const sendVectorsStateChange = (event, value) => {
+		selected = !selected
+
+		let vectorsStateDict = {
+			state: value
+		}
+
+		if (vectorsStateDataChannel && vectorsStateDataChannel.readyState === 'open') {
+			vectorsStateDataChannel.send(JSON.stringify(vectorsStateDict));
+		}
+	}
+
 	return <Container id="webRTCViewer" style={ componentStyle } disableGutters>
 		<video 
 			id="remoteVideo"
@@ -73,6 +88,7 @@ function MediaPanel(props) {
 			tabIndex="1"
 		>
 		</video>
+		<ToggleButton variant='contained' id='btnVectors' value={selected} selected={selected} onChange={(event) => sendVectorsStateChange(event, selected)}>Show vectors</ToggleButton>
 	</Container>; 
 }
 

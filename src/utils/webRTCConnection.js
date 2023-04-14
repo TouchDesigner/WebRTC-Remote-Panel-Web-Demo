@@ -8,13 +8,14 @@ import adapter from 'webrtc-adapter';
 * Uses Mozilla's Perfect Negotiation pattern https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Perfect_negotiation
 */
 class WebRTCConnection {
-    constructor(signalingClient, reactSetMouseDataChannelHandler, reactSetKeyboardDataChannelHandler) {
+    constructor(signalingClient, reactSetMouseDataChannelHandler, reactSetKeyboardDataChannelHandler, reactSeVectorsStateDataChannelHandler) {
         this.signalingClient = signalingClient;
         // Ensure signaling client has access to this instance to delegate messages
         this.signalingClient.setWebRTCConnection(this);
 
         this.reactSetMouseDataChannelHandler = reactSetMouseDataChannelHandler;
         this.reactSetKeyboardDataChannelHandler = reactSetKeyboardDataChannelHandler;
+        this.reactSetVectorsStateDataChannelHandler = reactSeVectorsStateDataChannelHandler;
         
         this.mediaConstraints = {
             audio: true,
@@ -25,7 +26,6 @@ class WebRTCConnection {
         this.makingOffer = false;
         this.ignoreOffer = false;
         this.isSettingRemoteAnswerPending = false;
-
 
         this.onMessageReceivedIce.bind(this);
     }
@@ -61,6 +61,9 @@ class WebRTCConnection {
         
         this.keyboardDataChannel = this.peerConnection.createDataChannel('KeyboardData');
         this.reactSetKeyboardDataChannelHandler(this.keyboardDataChannel);
+
+        this.vectorsStateDataChannel = this.peerConnection.createDataChannel('VectorsState');
+        this.reactSetVectorsStateDataChannelHandler(this.vectorsStateDataChannel);
     }
     
     deletePeerConnection() {
