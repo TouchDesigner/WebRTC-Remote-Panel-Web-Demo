@@ -1,3 +1,7 @@
+# Getting started
+
+A walkthrough is available [at the following link](https://derivative.ca/community-post/experience-webrtc-and-webrtc-remote-panel-new-webrtc-remote-panel-web-demo/67004).
+
 # Get the project running locally
 
 To run the project locally, you will need to first clone this repository.
